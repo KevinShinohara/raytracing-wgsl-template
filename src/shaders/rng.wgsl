@@ -47,3 +47,4 @@ fn sample_square(rngState: ptr<function, u32>) -> vec2f
 {
   return vec2f(rng_next_float(rngState), rng_next_float(rngState));
 }
+

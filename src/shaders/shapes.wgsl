@@ -1,7 +1,42 @@
-fn hit_sphere(center: vec3f, radius: f32, r: ray, record: ptr<function, hit_record>, max: f32)
-{
+fn hit_sphere(center: vec3f, radius: f32, r: ray, record: ptr<function, hit_record>, max: f32) {
+    var oc = r.origin - center;
+
+    var a = dot(r.direction, r.direction);
+    var b = 2.0 * dot(oc, r.direction);
+    var c = dot(oc, oc) - radius * radius;
+
+    var discriminant = b * b - 4.0 * a * c;
+
+    if (discriminant > 0.0) {
+        var sqrt_d = sqrt(discriminant);
+        var t1 = (-b - sqrt_d) / (2.0 * a);
+        var t2 = (-b + sqrt_d) / (2.0 * a);
+
+        var t = t1;
+        if (t < 0.0 || t > max) {
+            t = t2;
+        }
+
+        if (t > 0.0 && t < max) {
+            record.hit_anything = true;
+            record.t = t;
+            record.p = ray_at(r, t);
+            record.normal = normalize(record.p - center);
+
+            // Determinar se a colisão é front-face
+            record.frontface = dot(r.direction, record.normal) < 0.0;
+            if (!record.frontface) {
+                record.normal = -record.normal;
+            }
+        }
+    
+      return;
+    
+    }
 
 }
+
+
 
 fn hit_quad(r: ray, Q: vec4f, u: vec4f, v: vec4f, record: ptr<function, hit_record>, max: f32)
 {
